@@ -12,7 +12,7 @@ from .models import watchlist , streamplatform
 # django rest framework
 
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import status , viewsets
 from rest_framework import mixins
 from rest_framework import generics
 from rest_framework.decorators import api_view
@@ -31,23 +31,23 @@ from rest_framework.reverse import reverse
 def api_root(request, format=None):
     return Response({
         'watchlist': reverse('movie-list', request=request, format=format),
-        'streamplatform': reverse('stream-platform', request=request, format=format)
+        'streamplatform': reverse('stream', request=request, format=format)
     })
 
 
-@api_view(['GET'])
-def movie_list(request):
-    movieslist = watchlist.objects.all()
-    # print(movieslist)
-    serializer =  watchlistserializer(movieslist, many = True)
-    return Response (serializer.data)
+# @api_view(['GET'])
+# def movie_list(request):
+#     movieslist = watchlist.objects.all()
+#     # print(movieslist)
+#     serializer =  watchlistserializer(movieslist, many = True)
+#     return Response (serializer.data)
 
-@api_view(['GET'])
-def movie_detail(request , pk):
-    moviedetail = watchlist.objects.get(pk = pk)
-    # print(moviedetail)
-    serializer =  watchlistserializer(moviedetail)
-    return Response (serializer.data)
+# @api_view(['GET'])
+# def movie_detail(request , pk):
+#     moviedetail = watchlist.objects.get(pk = pk)
+#     # print(moviedetail)
+#     serializer =  watchlistserializer(moviedetail)
+#     return Response (serializer.data)
 
 
 
@@ -207,25 +207,50 @@ def movie_detail(request , pk):
 #  Using genric 
 
 
-class StreamPlatformList(generics.ListCreateAPIView):
+# class StreamPlatformList(generics.ListCreateAPIView):
+#     """
+#     List all streamplatformserializer, or create a new snippet.
+#     """
+
+#     queryset = streamplatform.objects.all()
+#     serializer_class = streamplatformserializer
+
+
+
+
+
+# class StreamPlatformDetail(generics.RetrieveUpdateDestroyAPIView):
+#     """
+#     Retrieve, update or delete a streamplatformserializer instance.
+#     """
+
+
+#     queryset = streamplatform.objects.all()
+#     serializer_class = streamplatformserializer
+
+
+    
+
+
+class movie_list(generics.ListCreateAPIView):
+    queryset = watchlist.objects.all()
+    serializer_class = watchlistserializer
+
+class movie_detail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = watchlist.objects.all()
+    serializer_class = watchlistserializer
+
+
+
+
+
+class StreamPlatformViewSet(viewsets.ModelViewSet):
     """
-    List all streamplatformserializer, or create a new snippet.
+    This ViewSet automatically provides `list`, `create`, `retrieve`,
+    `update` and `destroy` actions.
+
+    Additionally we also provide an extra `highlight` action.
     """
 
     queryset = streamplatform.objects.all()
     serializer_class = streamplatformserializer
-
-
-
-
-
-class StreamPlatformDetail(generics.RetrieveUpdateDestroyAPIView):
-    """
-    Retrieve, update or delete a streamplatformserializer instance.
-    """
-
-
-    queryset = streamplatform.objects.all()
-    serializer_class = streamplatformserializer
-
-

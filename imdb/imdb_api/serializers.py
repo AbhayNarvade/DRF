@@ -51,13 +51,15 @@ from .models import streamplatform , watchlist
 
 
 class streamplatformserializer (serializers.ModelSerializer):
+    watch  = watchlistserializer(many=True , read_only= True)
     class Meta :
         model = streamplatform
         fields = '__all__'
 
 
 
-class watchlistserializer(serializers.ModelSerializer):
+class watchlistserializer(serializers.HyperlinkedModelSerializer):
+    url = serializers.HyperlinkedIdentityField(view_name='movie-detail' )
     class Meta:
         model = watchlist
         # fields = ['id', 'title', 'storyline', 'platform', 'active', 'created']
