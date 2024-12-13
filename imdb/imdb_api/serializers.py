@@ -50,17 +50,31 @@ from .models import streamplatform , watchlist
 #         return instance
 
 
-class streamplatformserializer (serializers.ModelSerializer):
-    watch  = watchlistserializer(many=True , read_only= True)
-    class Meta :
-        model = streamplatform
-        fields = '__all__'
 
 
 
-class watchlistserializer(serializers.HyperlinkedModelSerializer):
-    url = serializers.HyperlinkedIdentityField(view_name='movie-detail' )
+class watchlistserializer(serializers.ModelSerializer):
+    # url = serializers.HyperlinkedIdentityField(view_name='movie-detail' )
     class Meta:
         model = watchlist
         # fields = ['id', 'title', 'storyline', 'platform', 'active', 'created']
         fields = '__all__'
+
+
+class streamplatformserializer (serializers.ModelSerializer):
+    # watch_related  = serializers.SlugRelatedField(many=True , read_only= True ,     slug_field='storyline')
+    # watch_related  = serializers.HyperlinkedIdentityField(view_name='movie-detail')
+    watch_related  = watchlistserializer(many=True , read_only= True )
+    class Meta :
+        model = streamplatform
+        fields = '__all__'
+
+    def validate_name (self,value):
+        if len(value)<2:
+            raise serializers.ValidationError('Name is to Short')
+        return value 
+    
+    def validate(self , data):
+        if data['name']== data['about']:
+            raise serializers.ValidationError('Name and about must be different')
+        return data
